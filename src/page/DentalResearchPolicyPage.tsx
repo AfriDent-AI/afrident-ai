@@ -16,7 +16,7 @@ export default function DentalResearchPolicyPage() {
       className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: `url(${allBg})` }}
     >
-      <div className="mx-auto max-w-[1470px] px-5 pt-6 pb-8">
+      <div className="mx-auto max-w-500 px-10 pt-6 pb-8">
         <ResearchHeader />
 
         <div className="mt-5 grid gap-4 xl:grid-cols-[300px_minmax(0,1fr)_330px]">

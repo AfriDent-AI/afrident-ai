@@ -300,13 +300,13 @@ export function HeroSection() {
   }, [uploadedImage]);
 
   return (
-    <section className="relative min-h-[screen] overflow-visible pb-20">
+    <section className="relative min-h-[screen] overflow-visible pb-40">
       {/* Background image */}
       <div className="absolute inset-0 flex">
         <img
           src={heroWomenImage}
           alt="Hero background"
-          className="h-full w-full object-cover transform mt-20"
+          className="h-full w-full object-cover transform"
         />
       </div>
 
@@ -419,7 +419,7 @@ export function HeroSection() {
         </div>
 
         <div />
-        <div className="relative flex size-67 mx-10 items-center -mt-10 justify-center">
+        <div className="relative flex size-67 mx-auto  right-10 bottom-1 items-center mt-5  justify-center">
           <div className="absolute inset-7 rounded-full" />
           <div className="z-10 text-center text-white">
             <img src={circleImage} alt="Circle decoration" />
@@ -505,7 +505,7 @@ export function HeroSection() {
 
       {/* Show All Services */}
       {!showLoading && !activeService && !searchQuery && !showResult && !searchAnswer && !showXrayResult && (
-        <div className="relative z-20 -mt-64 px-6 pb-10 lg:px-10">
+        <div className="relative z-20 bottom-36 px-6 pb-10 lg:px-10">
           <div className="mx-auto max-w-340">
             <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
               {services.map((service) => (

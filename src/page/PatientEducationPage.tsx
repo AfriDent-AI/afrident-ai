@@ -58,17 +58,9 @@ export default function PatientEducationPage() {
       className="min-h-screen bg-cover bg-center bg-no-repeat bg-fixed"
       style={{ backgroundImage: `url(${allBg})` }}
     >
-      {/* Decorative background */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-[30%] top-25 h-105 w-125 opacity-10">
-          <div className="h-full w-full bg-[radial-gradient(circle,#00B8D4_1.5px,transparent_1.5px)] bg-size-[7px_7px]" />
-        </div>
-
-        <div className="absolute bottom-0 left-0 h-75 w-full bg-[radial-gradient(circle_at_20%_100%,#B7E8FF,transparent_45%)]" />
-      </div>
-
+      
       {/* Main content */}
-      <section className="mx-auto max-w-566.5 px-6 pb-8 pt-5 lg:px-7">
+      <section className="mx-auto max-w-566.5 px-10 pb-10 pt-5 lg:px-7">
         <div className="flex items-start gap-10">
           {/* Back */}
           <Link
