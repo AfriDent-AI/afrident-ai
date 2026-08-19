@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+:root {
+  --afridient-primary: #00a8b5;
+  --afridient-primary-dark: #078b9b;
+  --afridient-secondary: #0077c8;
+  --afridient-cyan: #00c6d7;
+  --afridient-light: #e8f8fa;
+  --afridient-background: #f4fcfd;
+}
+
+
+
+
+@theme {
+  --font-sans: "Montserrat", sans-serif;
+}
+
+/* Global font */
+html,
+body,
+#root {
+  font-family: "Montserrat", sans-serif;
+}
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+body {
+  margin: 0;
+  min-width: 320px;
+  background: white;
+  color: #0f172a;
+  font-family: "Montserrat", sans-serif;
+}
+}
+
+* {
+  box-sizing: border-box;
+  font-family: inherit;
+}
+button,
+a {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    transform 150ms ease;
+}
+button {
+  cursor: pointer;
+}
