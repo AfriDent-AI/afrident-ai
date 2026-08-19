@@ -1,6 +1,6 @@
+// ChatWindow.tsx - Updated with search responses and loading animation
 import { useState } from "react";
 import {
-    Camera,
     Mic,
     Send,
     Trash2,
@@ -12,8 +12,9 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { getSearchAnswer, type SEARCH_ANSWERS } from "@/data/SearchAnswers";
+import { SearchLoading } from "../searchLoading";
 
-import { AIResult } from "./AIResult";
 
 type ChatWindowProps = {
     language: string;
@@ -23,15 +24,18 @@ type Message = {
     id: number;
     text: string;
     time: string;
+    isUser: boolean;
+    answer?: typeof SEARCH_ANSWERS[0];
 };
+
 
 export function ChatWindow({
     language,
 }: ChatWindowProps) {
     const [question, setQuestion] = useState("");
-    const [messages, setMessages] = useState<Message[]>([]); // ← Start with empty array
-    const [aiResponse, setAiResponse] = useState<string | null>(null); // ← Add state for AI response
-    const [isLoading, setIsLoading] = useState(false); // ← Optional: for loading state
+    const [messages, setMessages] = useState<Message[]>([]);
+    const [isLoading, setIsLoading] = useState(false);
+    const [loadingMessage, setLoadingMessage] = useState("Searching for:");
 
     const handleAsk = async () => {
         const value = question.trim();
@@ -51,28 +55,51 @@ export function ChatWindow({
                 id: Date.now(),
                 text: value,
                 time,
+                isUser: true,
             },
         ]);
 
         setQuestion("");
         setIsLoading(true);
-        setAiResponse(null); // Clear previous AI response
+        setLoadingMessage(`Searching for: "${value}"`);
 
-        // Simulate AI response (replace with your actual API call)
-        try {
-            // This is where you'd call your AI API
-          
+        // Simulate AI thinking with delay
+        await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
 
-            // Simulating a delay
-            setTimeout(() => {
-                setAiResponse("This is the AI's response to your dental question. It will provide helpful information based on your query.");
-                setIsLoading(false);
-            }, 1500);
-        } catch (error) {
-            console.error("Error getting AI response:", error);
-            setAiResponse("Sorry, I couldn't process your request. Please try again.");
-            setIsLoading(false);
+        // Get search answer
+        const answer = getSearchAnswer(value);
+        
+        if (answer) {
+            setMessages((previous) => [
+                ...previous,
+                {
+                    id: Date.now() + 1,
+                    text: answer.title,
+                    time: new Date().toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit",
+                    }),
+                    isUser: false,
+                    answer: answer,
+                },
+            ]);
+        } else {
+            // Fallback message if no answer found
+            setMessages((previous) => [
+                ...previous,
+                {
+                    id: Date.now() + 1,
+                    text: "I couldn't find specific information about that topic. Please try asking about: cavities, tooth pain, sensitivity, gum disease, or wisdom teeth.",
+                    time: new Date().toLocaleTimeString([], {
+                        hour: "numeric",
+                        minute: "2-digit",
+                    }),
+                    isUser: false,
+                },
+            ]);
         }
+
+        setIsLoading(false);
     };
 
     const handleKeyDown = (
@@ -85,8 +112,56 @@ export function ChatWindow({
 
     const clearChat = () => {
         setMessages([]);
-        setAiResponse(null); // Also clear AI response
         setIsLoading(false);
+    };
+
+    // Render AI answer card
+    const renderAIAnswer = (answer: typeof SEARCH_ANSWERS[0]) => {
+        return (
+            <div className="mt-3 rounded-xl border border-[#00A8B5]/20 bg-[#F0FBFC] p-4">
+                <div className="space-y-3">
+                    {/* Diagnosis */}
+                    <div>
+                        <h4 className="text-xs font-semibold text-[#00A8B5] uppercase tracking-wider">
+                            Possible Diagnosis
+                        </h4>
+                        <p className="text-sm font-medium text-gray-800">{answer.diagnosis}</p>
+                    </div>
+
+                    {/* Symptoms */}
+                    <div>
+                        <h4 className="text-xs font-semibold text-[#00A8B5] uppercase tracking-wider">
+                            Symptoms
+                        </h4>
+                        <ul className="mt-1 list-disc list-inside text-sm text-gray-700">
+                            {answer.symptoms.map((symptom, index) => (
+                                <li key={index}>{symptom}</li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Treatment */}
+                    <div>
+                        <h4 className="text-xs font-semibold text-[#00A8B5] uppercase tracking-wider">
+                            Treatment
+                        </h4>
+                        <ul className="mt-1 list-disc list-inside text-sm text-gray-700">
+                            {answer.treatment.map((item, index) => (
+                                <li key={index}>{item}</li>
+                            ))}
+                        </ul>
+                    </div>
+
+                    {/* Recommendation */}
+                    <div className="bg-blue-50 border-l-4 border-[#00A8B5] p-3 rounded-r-lg">
+                        <h4 className="text-xs font-semibold text-[#00A8B5] uppercase tracking-wider">
+                            Recommendation
+                        </h4>
+                        <p className="text-sm text-gray-800">{answer.recommendation}</p>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
     return (
@@ -107,6 +182,7 @@ export function ChatWindow({
                         onKeyDown={handleKeyDown}
                         placeholder="Ask your dental questions ......"
                         className="h-15 pr-4 text-base"
+                        disabled={isLoading}
                     />
 
                     {!question && (
@@ -118,12 +194,19 @@ export function ChatWindow({
 
                 <Button
                     onClick={handleAsk}
-                    className="h-14 rounded-xl bg-[#078F9E] px-5 hover:bg-[#067984]"
+                    disabled={isLoading || !question.trim()}
+                    className="h-14 rounded-xl bg-[#078F9E] px-5 hover:bg-[#067984] disabled:opacity-70"
                 >
-                    <Send className="size-4" color="white" />
-                    <span className="hidden text-white sm:inline">
-                        Ask AI
-                    </span>
+                    {isLoading ? (
+                        <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                        <>
+                            <Send className="size-4" color="white" />
+                            <span className="hidden text-white sm:inline">
+                                Ask AI
+                            </span>
+                        </>
+                    )}
                 </Button>
             </div>
 
@@ -189,19 +272,22 @@ export function ChatWindow({
                 {/* Show conversation only if there are messages */}
                 {messages.length > 0 && (
                     <>
-                        {/* User messages */}
                         {messages.map((message) => (
                             <div
                                 key={message.id}
                                 className="rounded-xl border border-slate-200 bg-[#F7FAFD]"
                             >
                                 <div className="flex items-center gap-3 border-b border-slate-100 px-4 py-2">
-                                    <div className="flex size-8 items-center justify-center rounded-full border border-[#00A0B1] bg-white text-[#008FA0]">
-                                        <UserCircle className="size-6" />
+                                    <div className={`flex size-8 items-center justify-center rounded-full border ${message.isUser ? 'border-[#00A0B1] bg-white text-[#008FA0]' : 'border-[#00A0B1] bg-[#00A0B1] text-white'}`}>
+                                        {message.isUser ? (
+                                            <UserCircle className="size-6" />
+                                        ) : (
+                                            <Bot className="size-5" />
+                                        )}
                                     </div>
 
-                                    <div className="flex-1 text-lg font-bold text-[#008FA0]">
-                                        You
+                                    <div className={`flex-1 text-lg font-bold ${message.isUser ? 'text-[#008FA0]' : 'text-[#078F9E]'}`}>
+                                        {message.isUser ? 'You' : 'AI Assistant'}
                                     </div>
 
                                     <span className="text-base font-semibold text-slate-500">
@@ -209,40 +295,39 @@ export function ChatWindow({
                                     </span>
                                 </div>
 
-                                <p className="px-4 py-3 text-base text-slate-500">
-                                    {message.text}
-                                </p>
+                                <div className="px-4 py-3">
+                                    {message.isUser ? (
+                                        <p className="text-base text-slate-500">
+                                            {message.text}
+                                        </p>
+                                    ) : (
+                                        <>
+                                            <p className="text-base font-semibold text-[#008FA0]">
+                                                {message.text}
+                                            </p>
+                                            {message.answer && renderAIAnswer(message.answer)}
+                                            {!message.answer && (
+                                                <p className="text-base text-slate-500 mt-2">
+                                                    {message.text}
+                                                </p>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         ))}
 
-                        {/* AI Response - show loading or actual response */}
+                        {/* Loading animation - Same as HeroSection */}
                         {isLoading && (
-                            <div className="rounded-xl border border-slate-200 bg-[#F7FAFD] p-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="flex size-8 items-center justify-center rounded-full border border-[#00A0B1] bg-[#00A0B1] text-white">
-                                        <Bot className="size-5" />
-                                    </div>
-                                    <div className="flex-1 text-sm font-bold text-[#008FA0]">
-                                        AI Assistant
-                                    </div>
-                                </div>
-                                <div className="mt-2 flex items-center gap-2 px-4 py-2">
-                                    <div className="h-2 w-2 animate-bounce rounded-full bg-[#00A0B1] [animation-delay:-0.3s]"></div>
-                                    <div className="h-2 w-2 animate-bounce rounded-full bg-[#00A0B1] [animation-delay:-0.15s]"></div>
-                                    <div className="h-2 w-2 animate-bounce rounded-full bg-[#00A0B1]"></div>
-                                    <span className="ml-2 text-xs text-slate-400">Thinking...</span>
-                                </div>
+                            <div className="rounded-xl   p-4">
+                                <SearchLoading searchQuery={loadingMessage} />
                             </div>
-                        )}
-
-                        {!isLoading && aiResponse && (
-                            <AIResult />
                         )}
                     </>
                 )}
 
                 {/* Empty state - only show when NO messages exist */}
-                {messages.length === 0 && (
+                {messages.length === 0 && !isLoading && (
                     <div className="flex min-h-75 flex-col items-center justify-center rounded-xl border border-dashed border-slate-200 text-center">
                         <Bot className="size-10 text-[#00A0B1]" />
 

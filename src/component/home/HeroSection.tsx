@@ -32,7 +32,7 @@ const SEARCH_ANSWERS = [
     recommendation: "See a dentist for an examination and X-ray if needed."
   },
   {
-    keywords: ["severe tooth pain", "tooth pain at night", "night tooth pain", "throbbing tooth", "pulp infection", "dental abscess", "abscess", "cracked tooth"],
+    keywords: ["severe tooth pain", "sever","tooth pain at night", "night tooth pain", "throbbing tooth", "pulp infection", "dental abscess", "abscess", "cracked tooth"],
     title: "Severe Tooth Pain ",
     diagnosis: "Deep cavity, Pulp inflammation/infection, Dental abscess, or Cracked tooth",
     symptoms: [

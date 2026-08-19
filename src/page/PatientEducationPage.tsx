@@ -3,13 +3,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   ArrowLeft,
-  GraduationCap,
 } from "lucide-react";
 import { EducationSearch } from "@/component/education/EducationSearch";
 import { EducationCategories } from "@/component/education/EducationCategories";
 import { HealthTopicCard } from "@/component/education/HealthTopicCard";
 import { EducationQuickActions } from "@/component/education/educationQuickActions";
 import allBg from '@/assets/all bg.png';
+import patientIcon from '@/assets/patientIcon.png'
 
 export default function PatientEducationPage() {
   const [selectedCategory, setSelectedCategory] =
@@ -74,9 +74,9 @@ export default function PatientEducationPage() {
           {/* Header */}
           <div className="mb-5 flex items-start gap-4">
             <div className="mt-1 flex size-12 items-center justify-center">
-              <GraduationCap
-                className="size-11 text-[#4D9BF5]"
-                strokeWidth={2.5}
+              <img 
+              src={patientIcon}
+                className="size-14d "
               />
             </div>
 

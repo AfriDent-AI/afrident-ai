@@ -8,7 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
+import researchIcon from '@/assets/researchIcon.png'
 export function ResearchHeader() {
   return (
     <div className="relative">
@@ -22,8 +22,8 @@ export function ResearchHeader() {
       <div className="flex items-start justify-between gap-6">
        
         <div className="flex items-start gap-4">
-          <div className="mt-1 flex size-12 shrink-0 items-center justify-center rounded-xl bg-[#4D9BF5] text-white">
-            <FileText className="size-7" />
+          <div >
+            <img src={researchIcon} className="size-14" />
           </div>
 
           <div>
